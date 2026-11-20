@@ -59,6 +59,73 @@
             </p>
           </div>
 
+          <!-- ================= PRODUCT BROWSER ================= -->
+          <section class="product-browser" aria-label="Product browser">
+            <div class="section-header-row">
+              <div>
+                <span class="section-eyebrow">STEP 1 &middot; EXPLORE PRODUCTS</span>
+                <h2 class="section-title">Select products for your routine</h2>
+              </div>
+
+              <div class="filter-control">
+                <label for="categoryFilter" class="filter-label">
+                  Category
+                </label>
+                <select id="categoryFilter" class="category-select">
+                  <option value="all">All Categories</option>
+                </select>
+              </div>
+            </div>
+
+            <p id="catalogStatus" class="catalog-status" role="status" aria-live="polite">
+              Loading products…
+            </p>
+
+            <div id="productGrid" class="product-grid"></div>
+          </section>
+
+          <!-- ================= SELECTED PRODUCTS ================= -->
+          <section
+            class="selected-products-section"
+            aria-label="Selected products"
+          >
+            <div class="selected-header">
+              <div class="selected-title-group">
+                <span class="section-eyebrow">STEP 2 &middot; YOUR SELECTION</span>
+                <h2 class="section-title">
+                  Selected Products
+                  <span id="selectedCount" class="selected-count">0</span>
+                </h2>
+              </div>
+
+              <div class="selected-actions">
+                <button
+                  type="button"
+                  id="clearSelectedBtn"
+                  class="clear-btn"
+                  disabled
+                >
+                  Clear All
+                </button>
+                <button
+                  type="button"
+                  id="generateRoutineBtn"
+                  class="generate-routine-btn"
+                  disabled
+                >
+                  Generate Routine
+                </button>
+              </div>
+            </div>
+
+            <p id="selectedEmpty" class="selected-empty">
+              No products selected yet. Choose items from the catalog above to
+              build a custom routine.
+            </p>
+
+            <ul id="selectedList" class="selected-list" hidden></ul>
+          </section>
+
           <!-- Suggested Questions -->
           <section class="suggestions-section" aria-label="Suggested questions">
             <p class="suggestions-heading">NOT SURE WHERE TO START?</p>
