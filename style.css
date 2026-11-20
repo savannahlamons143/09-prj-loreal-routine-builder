@@ -1,0 +1,676 @@
+/* =========================================================
+   L'ORÉAL BEAUTY ASSISTANT
+   Premium Beauty-Tech Interface
+   ========================================================= */
+
+
+/* ================= 1. GLOBAL RESET ================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-background: #f8f6f1;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f1eee7;
+
+  --color-black: #171717;
+  --color-text: #343434;
+  --color-muted: #77736c;
+
+  --color-gold: #b59a69;
+  --color-gold-light: #e8ddc7;
+
+  --color-border: #e7e1d7;
+  --color-user-bubble: #252525;
+  --color-ai-bubble: #f2efe9;
+
+  --shadow-soft: 0 12px 35px rgba(36, 29, 18, 0.06);
+
+  --font-main: "Montserrat", Arial, sans-serif;
+
+  --transition: 0.25s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background: var(--color-background);
+  display: flex;
+  justify-content: center;
+  line-height: 1.6;
+}
+
+
+/* ================= 2. PAGE LAYOUT ================= */
+
+.page-wrapper {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 35px;
+  margin: 0 auto;
+}
+
+.main-content {
+  width: 100%;
+}
+
+
+/* ================= 3. HEADER / BRANDING ================= */
+
+.site-header {
+  text-align: center;
+  padding: 38px 0 25px;
+}
+
+.brand-link {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.brand-logo {
+  display: block;
+  width: 270px;
+  max-width: 80%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.header-divider {
+  width: 65px;
+  height: 2px;
+  background: var(--color-gold);
+  margin: 20px auto 12px;
+}
+
+.header-subtitle {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--color-muted);
+}
+
+
+/* ================= 4. CHATBOX CONTAINER ================= */
+
+.chatbox {
+  margin: 25px auto 45px;
+  padding: 48px 55px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  box-shadow: var(--shadow-soft);
+}
+
+
+/* ================= 5. WELCOME SECTION ================= */
+
+.welcome-section {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 35px;
+}
+
+.welcome-label {
+  display: inline-block;
+  color: var(--color-gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 17px;
+}
+
+.welcome-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--color-black);
+  margin-bottom: 18px;
+}
+
+.welcome-title span {
+  display: block;
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+.welcome-description {
+  max-width: 620px;
+  margin: 0 auto;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+
+/* ================= 6. SUGGESTED QUESTIONS ================= */
+
+.suggestions-section {
+  margin: 35px 0 40px;
+  text-align: center;
+}
+
+.suggestions-heading {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--color-muted);
+  margin-bottom: 16px;
+}
+
+.suggestion-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestion-btn {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 30px;
+  padding: 11px 17px;
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.suggestion-btn:hover {
+  background: var(--color-black);
+  border-color: var(--color-black);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.suggestion-btn:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+
+/* ================= 7. CONVERSATION SECTION ================= */
+
+.conversation-section {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.conversation-header {
+  min-height: 57px;
+  padding: 15px 22px;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.assistant-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  background: #819879;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(129, 152, 121, 0.13);
+}
+
+.conversation-label {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+
+/* ================= 8. CHAT WINDOW ================= */
+
+.chat-window {
+  min-height: 330px;
+  max-height: 470px;
+  overflow-y: auto;
+  padding: 25px;
+  background: #fff;
+  scroll-behavior: smooth;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* ================= 9. MESSAGE BUBBLES ================= */
+
+.message {
+  display: flex;
+  width: 100%;
+  animation: messageAppear 0.3s ease;
+}
+
+.message.ai {
+  justify-content: flex-start;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.message-content {
+  max-width: 78%;
+  padding: 16px 19px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.message.ai .message-content {
+  background: var(--color-ai-bubble);
+  color: var(--color-text);
+  border-left: 3px solid var(--color-gold);
+}
+
+.message.user .message-content {
+  background: var(--color-user-bubble);
+  color: #fff;
+  border-right: 3px solid var(--color-gold);
+}
+
+.message-sender {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--color-gold);
+}
+
+.message.user .message-sender {
+  color: #dfcba6;
+  text-align: right;
+}
+
+.message-content p {
+  white-space: pre-wrap;
+}
+
+#messages .message:first-child .message-content p {
+  white-space: normal;
+}
+/* ================= 10. LATEST USER QUESTION ================= */
+
+.latest-question {
+  margin: 22px 0 0;
+  padding: 15px 18px;
+  background: #faf8f3;
+  border: 1px solid var(--color-gold-light);
+  border-left: 3px solid var(--color-gold);
+  border-radius: 3px;
+}
+
+.latest-question[hidden] {
+  display: none;
+}
+
+.latest-question-label {
+  display: block;
+  color: var(--color-gold);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+.latest-question p {
+  font-size: 12px;
+  color: var(--color-text);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+
+/* ================= 11. CHAT STATUS ================= */
+
+.chat-status {
+  padding: 0 22px;
+  color: var(--color-muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.chat-status:empty {
+  display: none;
+}
+
+
+/* ================= 12. MESSAGE INPUT ================= */
+
+.chat-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 20px;
+  border-top: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: 12px;
+  transition: var(--transition);
+}
+
+.chat-form input::placeholder {
+  color: #99948a;
+}
+
+.chat-form input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(181, 154, 105, 0.12);
+}
+
+.send-btn {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 3px;
+  background: var(--color-black);
+  color: white;
+  font-size: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.send-btn:hover {
+  background: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.send-btn:active {
+  transform: scale(0.96);
+}
+
+.send-btn:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.input-disclaimer {
+  padding: 0 20px 15px;
+  text-align: center;
+  background: #fff;
+  color: #99948a;
+  font-size: 9px;
+}
+
+
+/* ================= 13. FOOTER ================= */
+
+.site-footer {
+  text-align: center;
+  padding: 0 0 35px;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: 24px;
+}
+
+.footer-brand {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--color-black);
+  margin-bottom: 4px;
+}
+
+.footer-description {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--color-gold);
+  margin-bottom: 15px;
+}
+
+.copyright {
+  font-size: 10px;
+  color: var(--color-muted);
+}
+
+
+/* ================= 14. ANIMATIONS ================= */
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ================= 15. SCROLLBAR ================= */
+
+.chat-window::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-window::-webkit-scrollbar-track {
+  background: #f8f6f1;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+  background: #d5c8b1;
+  border-radius: 10px;
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+
+/* ================= 16. ACCESSIBILITY ================= */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ================= 17. TABLET RESPONSIVENESS ================= */
+
+@media (max-width: 768px) {
+
+  .page-wrapper {
+    padding: 0 20px;
+  }
+
+  .chatbox {
+    padding: 35px 25px;
+  }
+
+  .welcome-title {
+    font-size: 36px;
+  }
+
+  .message-content {
+    max-width: 88%;
+  }
+
+  .chat-window {
+    padding: 20px;
+  }
+
+}
+
+
+/* ================= 18. MOBILE RESPONSIVENESS ================= */
+
+@media (max-width: 480px) {
+
+  .page-wrapper {
+    padding: 0 12px;
+  }
+
+  .site-header {
+    padding: 28px 0 18px;
+  }
+
+  .brand-logo {
+    width: 220px;
+  }
+
+  .header-subtitle {
+    font-size: 9px;
+    letter-spacing: 3px;
+  }
+
+  .chatbox {
+    margin: 15px auto 30px;
+    padding: 27px 15px;
+  }
+
+  .welcome-title {
+    font-size: 30px;
+  }
+
+  .welcome-description {
+    font-size: 11px;
+  }
+
+  .suggestions-section {
+    margin: 27px 0 30px;
+  }
+
+  .suggestion-list {
+    gap: 8px;
+  }
+
+  .suggestion-btn {
+    font-size: 10px;
+    padding: 9px 12px;
+  }
+
+  .conversation-header {
+    padding: 13px 14px;
+  }
+
+  .conversation-label {
+    font-size: 7px;
+  }
+
+  .chat-window {
+    min-height: 300px;
+    max-height: 430px;
+    padding: 16px 12px;
+  }
+
+  .message-content {
+    max-width: 94%;
+    padding: 13px 14px;
+    font-size: 11px;
+  }
+
+  .chat-form {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .chat-form input {
+    font-size: 11px;
+    padding: 0 10px;
+  }
+
+  .send-btn {
+    width: 43px;
+    height: 43px;
+  }
+
+  .input-disclaimer {
+    font-size: 8px;
+    padding: 0 10px 13px;
+  }
+
+  .footer-brand {
+    font-size: 10px;
+  }
+
+  .copyright {
+    font-size: 9px;
+  }
+
+}
+
+
+/* ================= 19. REDUCED MOTION ================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+}
+
+
