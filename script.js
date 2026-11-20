@@ -13,10 +13,13 @@ const messages = document.getElementById("messages");
 const latestQuestion = document.getElementById("latestQuestion");
 const latestQuestionText = document.getElementById("latestQuestionText");
 const sendButton = document.getElementById("sendBtn");
+const webSearchToggle = document.getElementById("webSearchToggle");
 const chatStatus = document.getElementById("chatStatus");
 
 // Product browser and routine builder DOM elements
+const productSearch = document.getElementById("productSearch");
 const categoryFilter = document.getElementById("categoryFilter");
+const rtlToggle = document.getElementById("rtlToggle");
 const catalogStatus = document.getElementById("catalogStatus");
 const productGrid = document.getElementById("productGrid");
 const selectedCount = document.getElementById("selectedCount");
@@ -118,26 +121,102 @@ function populateCategoryDropdown() {
   categoryFilter.innerHTML = `<option value="all">All Categories</option>${optionsHtml}`;
 }
 
-// Build and render the product grid for the active category filter
+// Normalize search text by trimming, collapsing spaces, lowercasing, and mapping spaced variants
+function normalizeSearchQuery(rawQuery) {
+  const collapsed = String(rawQuery || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  const spacedVariantMap = {
+    "make up": "makeup",
+    "hair care": "haircare",
+    "skin care": "skincare",
+    "sun care": "suncare",
+  };
+
+  if (spacedVariantMap[collapsed]) {
+    return spacedVariantMap[collapsed];
+  }
+
+  return collapsed
+    .replace(/\bmake up\b/g, "makeup")
+    .replace(/\bhair care\b/g, "haircare")
+    .replace(/\bskin care\b/g, "skincare")
+    .replace(/\bsun care\b/g, "suncare");
+}
+
+// Build and render the product grid for the active category and search filters
 function renderProductGrid() {
   const activeCategory = categoryFilter.value;
-  const visibleProducts =
-    activeCategory === "all"
-      ? allProducts
-      : allProducts.filter((product) => product.category === activeCategory);
+  const rawSearch = productSearch.value.trim();
+  const collapsedQuery = rawSearch.toLowerCase().replace(/\s+/g, " ");
+  const searchQuery = normalizeSearchQuery(rawSearch);
 
-  if (visibleProducts.length === 0) {
-    catalogStatus.textContent = "No products found in this category.";
-    productGrid.innerHTML = "";
-    return;
-  }
+  // Collect exact category names present in products.json
+  const availableCategories = new Set(
+    allProducts
+      .map((product) => String(product.category || "").trim().toLowerCase())
+      .filter(Boolean)
+  );
+  const exactCategoryMatch = availableCategories.has(searchQuery)
+    ? searchQuery
+    : null;
+
+  // Apply both category dropdown and search filters together
+  const visibleProducts = allProducts.filter((product) => {
+    const productCategory = String(product.category || "").trim().toLowerCase();
+    const matchesCategoryDropdown =
+      activeCategory === "all" || product.category === activeCategory;
+    if (!matchesCategoryDropdown) return false;
+
+    if (!searchQuery) return true;
+
+    // Exact category queries only match products in that category
+    if (exactCategoryMatch) {
+      return productCategory === exactCategoryMatch;
+    }
+
+    // Other queries match partially across name, brand, category, and description
+    const searchableText = [
+      product.name,
+      product.brand,
+      product.category,
+      product.description,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return (
+      searchableText.includes(searchQuery) ||
+      searchableText.includes(collapsedQuery)
+    );
+  });
 
   const categoryText =
     activeCategory === "all"
       ? "all categories"
       : formatCategoryLabel(activeCategory);
 
-  catalogStatus.textContent = `Showing ${visibleProducts.length} product${visibleProducts.length === 1 ? "" : "s"} in ${categoryText}.`;
+  if (visibleProducts.length === 0) {
+    catalogStatus.textContent = "No matching products found.";
+    const searchDetail = rawSearch ? ` for "${escapeHtml(rawSearch)}"` : "";
+    const categoryDetail =
+      activeCategory === "all"
+        ? ""
+        : ` in ${escapeHtml(formatCategoryLabel(activeCategory))}`;
+
+    productGrid.innerHTML = `
+      <p class="empty-catalog-message" dir="ltr">
+        No products found${searchDetail}${categoryDetail}. Try a different keyword or switch back to All Categories.
+      </p>
+    `;
+    return;
+  }
+
+  const searchLabel = rawSearch ? ` matching "${rawSearch}"` : "";
+  catalogStatus.textContent = `Showing ${visibleProducts.length} product${visibleProducts.length === 1 ? "" : "s"}${searchLabel} in ${categoryText}.`;
 
   productGrid.innerHTML = visibleProducts
     .map((product) => {
@@ -153,8 +232,8 @@ function renderProductGrid() {
       return `
         <article class="product-card ${selected ? "is-selected" : ""}" data-card-id="${escapeHtml(productId)}">
           <div class="product-card-top">
-            <span class="product-category">${escapeHtml(formatCategoryLabel(category))}</span>
-            ${selected ? `<span class="product-selected-badge">Selected</span>` : ""}
+            <span class="product-category" dir="ltr">${escapeHtml(formatCategoryLabel(category))}</span>
+            ${selected ? `<span class="product-selected-badge" dir="ltr">Selected</span>` : ""}
           </div>
 
           <div class="product-image-wrap">
@@ -165,17 +244,18 @@ function renderProductGrid() {
             />
           </div>
 
-          <p class="product-brand">${escapeHtml(brand)}</p>
-          <h3 class="product-name">${escapeHtml(name)}</h3>
+          <p class="product-brand" dir="ltr">${escapeHtml(brand)}</p>
+          <h3 class="product-name" dir="ltr">${escapeHtml(name)}</h3>
 
           <details class="product-disclosure">
-            <summary class="product-disclosure-summary">Product details</summary>
-            <p class="product-description">${escapeHtml(description)}</p>
+            <summary class="product-disclosure-summary"><span dir="ltr">Product details</span></summary>
+            <p class="product-description" dir="ltr">${escapeHtml(description)}</p>
           </details>
 
           <button
             type="button"
             class="product-select-btn"
+            dir="ltr"
             data-product-id="${escapeHtml(productId)}"
             aria-pressed="${selected ? "true" : "false"}"
           >
@@ -201,7 +281,7 @@ function syncProductCardStates() {
     if (selected && !existingBadge && topRow) {
       topRow.insertAdjacentHTML(
         "beforeend",
-        `<span class="product-selected-badge">Selected</span>`
+        `<span class="product-selected-badge" dir="ltr">Selected</span>`
       );
     } else if (!selected && existingBadge) {
       existingBadge.remove();
@@ -242,12 +322,13 @@ function renderSelectedProducts() {
       return `
         <li class="selected-item">
           <div class="selected-item-info">
-            <span class="selected-item-name">${escapeHtml(name)}</span>
-            <span class="selected-item-meta">${escapeHtml(`${brand} · ${category}`)}</span>
+            <span class="selected-item-name" dir="ltr">${escapeHtml(name)}</span>
+            <span class="selected-item-meta" dir="ltr">${escapeHtml(`${brand} · ${category}`)}</span>
           </div>
           <button
             type="button"
             class="remove-selected-btn"
+            dir="ltr"
             data-product-id="${escapeHtml(productId)}"
             aria-label="Remove ${escapeHtml(`${brand} ${name}`)} from selected products"
           >
@@ -330,8 +411,109 @@ async function loadProducts() {
   }
 }
 
-// Append a user or assistant message bubble to the chat window
-function addMessage(role, text) {
+// Validate that a citation URL uses only safe http or https protocols
+function getSafeHttpUrl(rawUrl) {
+  if (typeof rawUrl !== "string") return null;
+  try {
+    const parsed = new URL(rawUrl.trim());
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.href;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+// Create a safe clickable inline citation link using DOM methods
+function createInlineCitationLink(source) {
+  const link = document.createElement("a");
+  link.className = "inline-citation-link";
+  link.href = source.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.setAttribute("dir", "ltr");
+
+  const label = source.title ? `${source.title} (${source.hostname})` : source.hostname;
+  link.title = label;
+  link.setAttribute("aria-label", `Source ${source.number}: ${label}`);
+  link.append(document.createTextNode(`[${source.number}]`));
+  return link;
+}
+
+// Render answer text and clickable inline citations using only DOM text nodes and safe links
+function renderMessageWithCitations(paragraph, rawText, rawCitations) {
+  const leadingTrim = rawText.length - rawText.trimStart().length;
+  const text = rawText.trim();
+
+  // Keep only citations that have valid http/https URLs
+  const uniqueSourcesByUrl = new Map();
+  const orderedSources = [];
+  const validCitations = [];
+
+  for (const citation of rawCitations) {
+    const safeUrl = getSafeHttpUrl(citation?.url);
+    if (!safeUrl) continue;
+
+    let source = uniqueSourcesByUrl.get(safeUrl);
+    if (!source) {
+      let hostname = safeUrl;
+      try {
+        hostname = new URL(safeUrl).hostname.replace(/^www\./, "");
+      } catch {
+        hostname = safeUrl;
+      }
+
+      source = {
+        number: orderedSources.length + 1,
+        url: safeUrl,
+        title: typeof citation.title === "string" ? citation.title.trim() : "",
+        hostname,
+      };
+      uniqueSourcesByUrl.set(safeUrl, source);
+      orderedSources.push(source);
+    }
+
+    const hasOffsets =
+      Number.isInteger(citation.start_index) &&
+      Number.isInteger(citation.end_index);
+
+    const start = hasOffsets ? citation.start_index - leadingTrim : -1;
+    const end = hasOffsets ? citation.end_index - leadingTrim : -1;
+
+    if (start >= 0 && end >= start && end <= text.length) {
+      validCitations.push({ start, end, source });
+    }
+  }
+
+  // Sort positional citations from earliest to latest in the answer string
+  validCitations.sort((a, b) => a.start - b.start || a.end - b.end);
+
+  let cursor = 0;
+
+  for (const item of validCitations) {
+    if (item.start > cursor) {
+      paragraph.append(document.createTextNode(text.slice(cursor, item.start)));
+      cursor = item.start;
+    }
+
+    if (item.end > cursor) {
+      paragraph.append(document.createTextNode(text.slice(cursor, item.end)));
+      cursor = item.end;
+    }
+
+    paragraph.append(createInlineCitationLink(item.source));
+  }
+
+  if (cursor < text.length) {
+    paragraph.append(document.createTextNode(text.slice(cursor)));
+  }
+
+  return orderedSources;
+}
+
+// Append a user or assistant message bubble (and any verified web sources) to the chat
+function addMessage(role, rawText, citations = []) {
   const message = document.createElement("div");
   message.classList.add("message", role);
 
@@ -340,12 +522,54 @@ function addMessage(role, text) {
 
   const sender = document.createElement("span");
   sender.className = "message-sender";
+  sender.setAttribute("dir", "ltr");
   sender.textContent = role === "user" ? "YOU" : "BEAUTY ASSISTANT";
 
   const paragraph = document.createElement("p");
-  paragraph.textContent = text;
+  paragraph.setAttribute("dir", "auto");
+
+  let sources = [];
+  if (role === "ai" && Array.isArray(citations) && citations.length > 0) {
+    sources = renderMessageWithCitations(paragraph, rawText, citations);
+  } else {
+    paragraph.textContent = String(rawText ?? "").trim();
+  }
 
   content.append(sender, paragraph);
+
+  if (sources.length > 0) {
+    const sourcesBox = document.createElement("div");
+    sourcesBox.className = "message-sources";
+    sourcesBox.setAttribute("dir", "ltr");
+
+    const sourcesLabel = document.createElement("span");
+    sourcesLabel.className = "message-sources-label";
+    sourcesLabel.textContent = "Sources";
+
+    const sourcesList = document.createElement("ul");
+    sourcesList.className = "message-sources-list";
+
+    for (const source of sources) {
+      const listItem = document.createElement("li");
+      const link = document.createElement("a");
+      link.className = "message-source-link";
+      link.href = source.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      const sourceTitle = source.title || source.hostname;
+      link.append(
+        document.createTextNode(`[${source.number}] ${sourceTitle} — ${source.hostname}`)
+      );
+
+      listItem.append(link);
+      sourcesList.append(listItem);
+    }
+
+    sourcesBox.append(sourcesLabel, sourcesList);
+    content.append(sourcesBox);
+  }
+
   message.append(content);
   messages.append(message);
 }
@@ -355,6 +579,7 @@ async function sendChatRequest({
   displayText,
   apiText = displayText,
   restoreInputOnError = false,
+  useWebSearch = false,
 }) {
   const trimmedApiText = apiText.trim();
   if (!trimmedApiText || isRequestInProgress) return;
@@ -369,18 +594,32 @@ async function sendChatRequest({
 
   isRequestInProgress = true;
   updateActionButtons();
-  chatStatus.textContent = "Beauty Assistant is thinking…";
+  chatStatus.textContent = useWebSearch
+    ? "Searching the web and thinking…"
+    : "Beauty Assistant is thinking…";
   chatWindow.scrollTop = chatWindow.scrollHeight;
 
   try {
+    const requestPayload = {
+      messages: [...chatHistory, userMessage],
+    };
+
+    if (useWebSearch) {
+      requestPayload.webSearch = true;
+    }
+
     const response = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [...chatHistory, userMessage] }),
+      body: JSON.stringify(requestPayload),
     });
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content?.trim();
+    const rawReply =
+      typeof data.answer === "string"
+        ? data.answer
+        : data.choices?.[0]?.message?.content || "";
+    const reply = rawReply.trim();
 
     if (!response.ok || !reply) {
       throw new Error(
@@ -388,13 +627,26 @@ async function sendChatRequest({
       );
     }
 
-    // Save both turns in chatHistory so follow-ups can reference the routine
+    const returnedCitations = Array.isArray(data.citations) ? data.citations : [];
+    const safeCitations = returnedCitations.filter((citation) =>
+      Boolean(getSafeHttpUrl(citation?.url))
+    );
+
+    // Save both turns in chatHistory so follow-ups can reference earlier answers
     chatHistory.push(userMessage, { role: "assistant", content: reply });
-    addMessage("ai", reply);
-    chatStatus.textContent = "";
+    addMessage("ai", rawReply, safeCitations);
+
+    if (useWebSearch && safeCitations.length === 0) {
+      chatStatus.textContent =
+        "Web search returned no citations for this answer.";
+    } else {
+      chatStatus.textContent = "";
+    }
   } catch (error) {
     console.error("Chat request failed:", error);
-    chatStatus.textContent = "Couldn’t get a reply. Please try again.";
+    chatStatus.textContent = useWebSearch
+      ? "Web search failed. Please try again."
+      : "Couldn’t get a reply. Please try again.";
     if (restoreInputOnError && !userInput.value) {
       userInput.value = displayText;
     }
@@ -441,10 +693,15 @@ async function handleGenerateRoutine() {
     displayText,
     apiText,
     restoreInputOnError: false,
+    useWebSearch: false,
   });
 }
 
-// Category filter change keeps selections intact while updating the grid
+// Search and category filters update the product grid while keeping selections
+productSearch.addEventListener("input", () => {
+  renderProductGrid();
+});
+
 categoryFilter.addEventListener("change", () => {
   renderProductGrid();
 });
@@ -496,8 +753,20 @@ chatForm.addEventListener("submit", async (event) => {
     displayText: question,
     apiText: question,
     restoreInputOnError: true,
+    useWebSearch: webSearchToggle.checked,
   });
 });
 
-// Initialize product catalog on page load
+// Toggle between LTR and RTL page layout while keeping filters and selections intact
+function applyLayoutDirection(isRtl) {
+  document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
+  rtlToggle.setAttribute("aria-checked", isRtl ? "true" : "false");
+}
+
+rtlToggle.addEventListener("change", () => {
+  applyLayoutDirection(rtlToggle.checked);
+});
+
+// Initialize layout direction and load product catalog on page load
+applyLayoutDirection(rtlToggle.checked);
 loadProducts();

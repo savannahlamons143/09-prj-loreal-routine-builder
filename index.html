@@ -38,7 +38,7 @@
 
         <div class="header-divider"></div>
 
-        <p class="header-subtitle">BEAUTY ASSISTANT</p>
+        <p class="header-subtitle" dir="ltr">BEAUTY ASSISTANT</p>
       </header>
 
       <!-- ================= MAIN CONTENT ================= -->
@@ -46,14 +46,14 @@
         <section class="chatbox" aria-label="L'Oréal Beauty Assistant">
           <!-- Chat Introduction -->
           <div class="welcome-section">
-            <span class="welcome-label">YOUR PERSONAL BEAUTY GUIDE</span>
+            <span class="welcome-label" dir="ltr">YOUR PERSONAL BEAUTY GUIDE</span>
 
-            <h1 class="welcome-title">
+            <h1 class="welcome-title" dir="ltr">
               Discover your beauty.
               <span>Find your perfect routine.</span>
             </h1>
 
-            <p class="welcome-description">
+            <p class="welcome-description" dir="ltr">
               Explore L'Oréal beauty products, discover personalized
               recommendations, and find the right routine for your needs.
             </p>
@@ -63,21 +63,51 @@
           <section class="product-browser" aria-label="Product browser">
             <div class="section-header-row">
               <div>
-                <span class="section-eyebrow">STEP 1 &middot; EXPLORE PRODUCTS</span>
-                <h2 class="section-title">Select products for your routine</h2>
+                <span class="section-eyebrow" dir="ltr">STEP 1 &middot; EXPLORE PRODUCTS</span>
+                <h2 class="section-title" dir="ltr">Select products for your routine</h2>
               </div>
 
-              <div class="filter-control">
-                <label for="categoryFilter" class="filter-label">
-                  Category
-                </label>
-                <select id="categoryFilter" class="category-select">
-                  <option value="all">All Categories</option>
-                </select>
+              <div class="browser-controls">
+                <div class="filter-control filter-control--search">
+                  <label for="productSearch" class="filter-label" dir="ltr">
+                    Search Products
+                  </label>
+                  <input
+                    id="productSearch"
+                    type="search"
+                    class="search-input"
+                    dir="ltr"
+                    placeholder="Search products"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="filter-control">
+                  <label for="categoryFilter" class="filter-label" dir="ltr">
+                    Category
+                  </label>
+                  <select id="categoryFilter" class="category-select" dir="ltr">
+                    <option value="all">All Categories</option>
+                  </select>
+                </div>
+
+                <div class="filter-control filter-control--toggle">
+                  <label for="rtlToggle" class="rtl-toggle">
+                    <input
+                      id="rtlToggle"
+                      type="checkbox"
+                      class="rtl-toggle-input"
+                      role="switch"
+                      aria-checked="false"
+                    />
+                    <span class="rtl-toggle-switch" aria-hidden="true"></span>
+                    <span class="rtl-toggle-text" dir="ltr">Right-to-left layout</span>
+                  </label>
+                </div>
               </div>
             </div>
 
-            <p id="catalogStatus" class="catalog-status" role="status" aria-live="polite">
+            <p id="catalogStatus" class="catalog-status" dir="ltr" role="status" aria-live="polite">
               Loading products…
             </p>
 
@@ -91,9 +121,9 @@
           >
             <div class="selected-header">
               <div class="selected-title-group">
-                <span class="section-eyebrow">STEP 2 &middot; YOUR SELECTION</span>
+                <span class="section-eyebrow" dir="ltr">STEP 2 &middot; YOUR SELECTION</span>
                 <h2 class="section-title">
-                  Selected Products
+                  <span dir="ltr">Selected Products</span>
                   <span id="selectedCount" class="selected-count">0</span>
                 </h2>
               </div>
@@ -103,6 +133,7 @@
                   type="button"
                   id="clearSelectedBtn"
                   class="clear-btn"
+                  dir="ltr"
                   disabled
                 >
                   Clear All
@@ -111,6 +142,7 @@
                   type="button"
                   id="generateRoutineBtn"
                   class="generate-routine-btn"
+                  dir="ltr"
                   disabled
                 >
                   Generate Routine
@@ -118,7 +150,7 @@
               </div>
             </div>
 
-            <p id="selectedEmpty" class="selected-empty">
+            <p id="selectedEmpty" class="selected-empty" dir="ltr">
               No products selected yet. Choose items from the catalog above to
               build a custom routine.
             </p>
@@ -128,7 +160,7 @@
 
           <!-- Suggested Questions -->
           <section class="suggestions-section" aria-label="Suggested questions">
-            <p class="suggestions-heading">NOT SURE WHERE TO START?</p>
+            <p class="suggestions-heading" dir="ltr">NOT SURE WHERE TO START?</p>
 
             <div class="suggestion-list">
               <button
@@ -170,10 +202,10 @@
             <div class="conversation-header">
               <div class="assistant-status">
                 <span class="status-indicator" aria-hidden="true"></span>
-                <span>Beauty Assistant</span>
+                <span dir="ltr">Beauty Assistant</span>
               </div>
 
-              <span class="conversation-label">HERE TO HELP YOU GLOW</span>
+              <span class="conversation-label" dir="ltr">HERE TO HELP YOU GLOW</span>
             </div>
 
             <!-- Conversation History -->
@@ -189,8 +221,8 @@
                 <!-- Initial Assistant Message -->
                 <div class="message ai">
                   <div class="message-content">
-                    <span class="message-sender">BEAUTY ASSISTANT</span>
-                    <p>
+                    <span class="message-sender" dir="ltr">BEAUTY ASSISTANT</span>
+                    <p dir="auto">
                       Hello! Welcome to your L'Oréal Beauty Assistant. I'm here
                       to help you explore products, discover routines, and find
                       beauty recommendations. What would you like to know today?
@@ -206,8 +238,8 @@
                 aria-live="polite"
                 hidden
               >
-                <span class="latest-question-label">YOUR LATEST QUESTION</span>
-                <p id="latestQuestionText"></p>
+                <span class="latest-question-label" dir="ltr">YOUR LATEST QUESTION</span>
+                <p id="latestQuestionText" dir="auto"></p>
               </div>
             </div>
 
@@ -215,6 +247,7 @@
             <div
               id="chatStatus"
               class="chat-status"
+              dir="ltr"
               role="status"
               aria-live="polite"
             ></div>
@@ -229,11 +262,21 @@
                 id="userInput"
                 name="userInput"
                 type="text"
+                dir="auto"
                 placeholder="Ask about skincare, makeup, haircare..."
                 autocomplete="off"
                 maxlength="1000"
                 required
               />
+
+              <label for="webSearchToggle" class="web-search-toggle" dir="ltr">
+                <input
+                  id="webSearchToggle"
+                  type="checkbox"
+                  class="web-search-checkbox"
+                />
+                <span>Search the web</span>
+              </label>
 
               <button
                 type="submit"
@@ -245,7 +288,7 @@
               </button>
             </form>
 
-            <p class="input-disclaimer">
+            <p class="input-disclaimer" dir="ltr">
               Beauty advice and recommendations are provided for informational
               purposes.
             </p>
@@ -257,11 +300,11 @@
       <footer class="site-footer">
         <div class="footer-divider"></div>
 
-        <p class="footer-brand">L'ORÉAL PARIS</p>
+        <p class="footer-brand" dir="ltr">L'ORÉAL PARIS</p>
 
-        <p class="footer-description">Because you're worth it.</p>
+        <p class="footer-description" dir="ltr">Because you're worth it.</p>
 
-        <p class="copyright">
+        <p class="copyright" dir="ltr">
           &copy; 2026 L'Oréal Beauty Assistant. All rights reserved.
         </p>
       </footer>
